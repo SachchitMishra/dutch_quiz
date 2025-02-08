@@ -1,26 +1,18 @@
 import streamlit as st
 import random
+import csv
 
-# Dictionary of Dutch words and their English meanings
-dutch_words = {
-    "ik": "I", "je": "you (informal)", "het": "it", "de": "the", "dat": "that",
-    "is": "is", "een": "a, one", "niet": "not", "en": "and", "wat": "what",
-    "van": "of, from", "we": "we", "in": "in", "ze": "they, she", "hij": "he",
-    "op": "on", "te": "to, too", "zijn": "to be, his, their", "er": "there",
-    "maar": "but", "die": "that, those", "heb": "have (I form)", "me": "me",
-    "met": "with", "voor": "for", "als": "if, as", "ben": "am", "was": "was",
-    "dit": "this", "mijn": "my", "om": "around, for", "aan": "on, at, to",
-    "jij": "you (emphatic)", "naar": "to, towards", "dan": "than, then",
-    "hier": "here", "weet": "know (I/he/she/it form)", "kan": "can", "geen": "no, none",
-    "nog": "still, yet", "moet": "must, have to", "wil": "want", "wel": "indeed, surely",
-    "ja": "yes", "zo": "so, like that", "heeft": "has", "hebben": "to have",
-    "hem": "him", "goed": "good", "nee": "no", "waar": "where, true",
-    "nu": "now", "hoe": "how", "ga": "go (I form)", "haar": "her, hair",
-    "uit": "out", "doen": "to do", "ook": "also, too", "over": "about, over",
-    "bent": "are (you form)", "mij": "me", "gaan": "to go", "of": "or",
-    "kom": "come (I form)", "zou": "would", "al": "already, all", "bij": "at, near",
-    "daar": "there", "ons": "us, our", "jullie": "you (plural)", "hebt": "have (you form)"
-}
+# Function to load words from CSV file
+def load_words_from_csv(filename):
+    words = {}
+    with open(filename, mode="r", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            words[row["Dutch"]] = row["English"]
+    return words
+
+# Load words from CSV
+dutch_words = load_words_from_csv("dutch_words.csv")
 
 # Initialize session state
 if "score" not in st.session_state:
@@ -75,7 +67,7 @@ if st.button("Submit"):
     
     # Generate a new question and refresh UI
     new_question()
-    st.rerun()  # Updated from st.experimental_rerun()
+    st.rerun()
 
 # Display Score
 st.metric(label="Your Score", value=st.session_state.score)
@@ -84,4 +76,4 @@ st.metric(label="Your Score", value=st.session_state.score)
 if st.button("Reset Score"):
     st.session_state.score = 0
     new_question()
-    st.rerun()  # Updated from st.experimental_rerun()
+    st.rerun()
