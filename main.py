@@ -8,7 +8,7 @@ def load_words_from_csv(filename):
     with open(filename, mode="r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            words[row["Dutch"]] = row["English"]
+            words[row["dutch"]] = row["english"]
     return words
 
 # Load words from CSV
