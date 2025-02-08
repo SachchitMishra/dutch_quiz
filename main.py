@@ -29,18 +29,19 @@ if "word" not in st.session_state:
     st.session_state.word = None
 if "options" not in st.session_state:
     st.session_state.options = []
+if "correct_answer" not in st.session_state:
+    st.session_state.correct_answer = None
 
-# Function to generate new question
+# Function to generate a new question
 def new_question():
     word = random.choice(list(dutch_words.keys()))
     correct_translation = dutch_words[word]
     
-    # Get three incorrect choices
-    incorrect_choices = random.sample(list(dutch_words.values()), 3)
-    
-    # Ensure correct translation is not duplicated
-    while correct_translation in incorrect_choices:
-        incorrect_choices = random.sample(list(dutch_words.values()), 3)
+    # Ensure incorrect choices do not include the correct answer
+    incorrect_choices = random.sample(
+        [value for value in dutch_words.values() if value != correct_translation], 
+        min(3, len(dutch_words) - 1)  # Avoid ValueError if fewer than 4 words exist
+    )
     
     # Create choices list and shuffle
     choices = incorrect_choices + [correct_translation]
@@ -51,12 +52,12 @@ def new_question():
     st.session_state.options = choices
     st.session_state.correct_answer = correct_translation
 
-# Generate first question if not set
+# Generate the first question if not set
 if not st.session_state.word:
     new_question()
 
 # App Title
-st.title("Dutch to English Translation Quiz")
+st.title("🇳🇱 Dutch to English Translation Quiz")
 
 # Display Dutch word
 st.subheader(f"Translate this Dutch word: **{st.session_state.word}**")
@@ -72,14 +73,15 @@ if st.button("Submit"):
     else:
         st.error(f"❌ Incorrect. The correct answer is: **{st.session_state.correct_answer}**")
     
-    # Generate new question
+    # Generate a new question and refresh UI
     new_question()
+    st.rerun()  # Updated from st.experimental_rerun()
 
 # Display Score
-st.write(f"**Score: {st.session_state.score}**")
+st.metric(label="Your Score", value=st.session_state.score)
 
 # Reset Score Button
 if st.button("Reset Score"):
     st.session_state.score = 0
     new_question()
-    st.experimental_rerun()
+    st.rerun()  # Updated from st.experimental_rerun()
