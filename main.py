@@ -17,6 +17,8 @@ dutch_words = load_words_from_csv("dutch_words.csv")
 # Initialize session state
 if "score" not in st.session_state:
     st.session_state.score = 0
+if "total_questions" not in st.session_state:
+    st.session_state.total_questions = 0
 if "word" not in st.session_state:
     st.session_state.word = None
 if "options" not in st.session_state:
@@ -65,15 +67,19 @@ if st.button("Submit"):
     else:
         st.error(f"❌ Incorrect. The correct answer is: **{st.session_state.correct_answer}**")
     
+    # Increment total question count
+    st.session_state.total_questions += 1
+    
     # Generate a new question and refresh UI
     new_question()
     st.rerun()
 
-# Display Score
-st.metric(label="Your Score", value=st.session_state.score)
+# Display Score: "correct/total"
+st.metric(label="Your Score", value=f"{st.session_state.score}/{st.session_state.total_questions}")
 
 # Reset Score Button
 if st.button("Reset Score"):
     st.session_state.score = 0
+    st.session_state.total_questions = 0
     new_question()
     st.rerun()
